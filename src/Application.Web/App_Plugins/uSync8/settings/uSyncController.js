@@ -13,6 +13,8 @@
         vm.reported = false;
         vm.syncing = false; 
 
+        vm.showAdvanced = false;
+
         var modes = {
             NONE: 0,
             REPORT: 1,
@@ -38,7 +40,19 @@
             }]
         };
 
+        vm.reportButton = {
+            state: 'init',
+            defaultButton: {
+                labelKey: 'usync_report',
+                handler: function () {
+                    report('');
+                }
+            },
+            subButtons: []
+        };
+
         vm.report = report;
+
         vm.exportItems = exportItems;
         vm.importForce = importForce;
         vm.importItems = importItems;
@@ -54,6 +68,7 @@
 
         function init() {
             InitHub();
+            getHandlerGroups();
 
             // just so there is something there when you start 
             uSync8DashboardService.getHandlers()
@@ -64,10 +79,10 @@
         }
 
         ///////////
-        function report() {
+        function report(group) {
             resetStatus(modes.REPORT);
 
-            uSync8DashboardService.report(getClientId())
+            uSync8DashboardService.report(group, getClientId())
                 .then(function (result) {
                     vm.results = result.data;
                     vm.working = false;
@@ -94,11 +109,11 @@
             importItems(true);
         }
 
-        function importItems(force) {
+        function importItems(force, group) {
             resetStatus(modes.IMPORT);
             vm.importButton.state = 'busy';
 
-            uSync8DashboardService.importItems(force, getClientId())
+            uSync8DashboardService.importItems(force, group, getClientId())
                 .then(function (result) {
                     vm.results = result.data;
                     vm.working = false;
@@ -111,6 +126,32 @@
                     vm.working = false;
                     vm.reported = true;
                 });
+        }
+
+        //////////////
+
+        function getHandlerGroups() {
+            uSync8DashboardService.getHandlerGroups()
+                .then(function (result) {
+                    angular.forEach(result.data, function (group, key) {
+                        vm.importButton.subButtons.push({
+                            handler: function () {
+                                importGroup(group);
+                            },
+                            labelKey: 'usync_import-' + group.toLowerCase()
+                        });
+                        vm.reportButton.subButtons.push({
+                            handler: function () {
+                                report(group);
+                            },
+                            labelKey: 'usync_report-' + group.toLowerCase()
+                        });
+                    });
+                });
+        }
+
+        function importGroup(group) {
+            importItems(false, group);
         }
 
         //////////////

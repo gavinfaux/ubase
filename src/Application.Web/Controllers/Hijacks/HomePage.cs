@@ -1,15 +1,11 @@
-﻿using Application.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Application.Core.Services;
 using Umbraco.Web.Models;
 using Umbraco.Web.Mvc;
 
 namespace Application.Web.Controllers.Hijacks
 {
-    public class HomePageController : Umbraco.Web.Mvc.RenderMvcController
+    public class HomePageController : RenderMvcController
     {
         private readonly ICmsService _cmsService;
 
@@ -20,7 +16,6 @@ namespace Application.Web.Controllers.Hijacks
 
         public override ActionResult Index(ContentModel model)
         {
-
             // Do some stuff here, then return the base method
             return base.Index(model);
         }

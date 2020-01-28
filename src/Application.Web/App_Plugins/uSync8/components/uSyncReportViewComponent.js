@@ -5,13 +5,15 @@
         templateUrl: Umbraco.Sys.ServerVariables.application.applicationPath + 'App_Plugins/uSync8/Components/uSyncReportView.html',
         bindings: {
             action: '<',
-            results: '<'
+            results: '<',
+            hideAction: '<',
+            showAll: '<'
         },
         controllerAs: 'vm',
         controller: uSyncReportViewController
     };
 
-    function uSyncReportViewController($scope, editorService) {
+    function uSyncReportViewController($scope, editorService, uSync8DashboardService) {
 
         var vm = this;
 
@@ -19,7 +21,10 @@
         vm.getTypeName = getTypeName;
         vm.countChanges = countChanges;
         vm.openDetail = openDetail;
-        vm.showAll = false; 
+        vm.showAll = vm.showAll || false;
+
+        vm.apply = apply;
+        vm.status = status;
 
         /////////
 
@@ -54,6 +59,25 @@
                 }
             };
             editorService.open(options);
+        }
+
+        function apply(item) {
+
+            // do some application thing (apply just one item)
+            item.applyState = 'busy';
+            uSync8DashboardService.importItem(item)
+                .then(function (result) {
+                    console.log(result.data);
+                    item.applyState = 'success';
+                }, function (error) {
+                    console.log(error);
+                    item.applyState = 'error';
+                });
+        }
+
+        function status(item) {
+            if (item.applyState === undefined) return 'init';
+            return item.applyState;
         }
 
     }

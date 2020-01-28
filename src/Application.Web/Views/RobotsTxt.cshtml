@@ -1,26 +1,27 @@
-﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<IPublishedContent>
-@using Application.Core.Extensions
+﻿@using Application.Core.Extensions
 @using Application.Models.Models.CmsModels
+@inherits UmbracoViewPage<IPublishedContent>
 @{
     Layout = null; /* TODO: Do all of this craziness somewhere else, and cache it? */
     var root = Model.AncestorOrSelf("siteRoot") as SiteRoot;
 
-    var siteSeoSettings = root.SiteSettings.GetElement("elementSiteSeoSettings");
+    var siteSeoSettings = root?.SiteSettings.GetElement("elementSiteSeoSettings");
 
     HttpContext.Current.Response.ClearHeaders();
     HttpContext.Current.Response.AddHeader("Content-Type", "text/plain; charset=utf-8");
-}@GetOutputString(siteSeoSettings)
+}
+@GetOutputString(siteSeoSettings)
 
 
 @functions {
-    string GetOutputString(IPublishedElement siteSeoSettings){
+
+    string GetOutputString(IPublishedElement siteSeoSettings)
+    {
         if (siteSeoSettings.Value<bool>("disallowRobots"))
         {
-            return  "User-agent: *\nDisallow: /";
+            return "User-agent: *\nDisallow: /";
         }
-        else
-        {
-            return siteSeoSettings.Value<string>("robotsTxt");
-        }
+        return siteSeoSettings.Value<string>("robotsTxt");
     }
+
 }

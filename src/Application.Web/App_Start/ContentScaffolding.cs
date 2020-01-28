@@ -1,8 +1,6 @@
 ﻿using Umbraco.Core.Composing;
-using Umbraco.Web;
-using Umbraco.Web.Cache;
 
-namespace Application.Web.App_Start
+namespace Application.Web
 {
     public class ContentScaffoldingComposer : ComponentComposer<CachePurging>
     {
@@ -11,16 +9,15 @@ namespace Application.Web.App_Start
 
     public class ContentScaffoldingComponent : IComponent
     {
-        public void Compose(Composition composition)
-        {
-        }
-
-
         public void Initialize()
         {
         }
 
         public void Terminate()
+        {
+        }
+
+        public void Compose(Composition composition)
         {
         }
     }

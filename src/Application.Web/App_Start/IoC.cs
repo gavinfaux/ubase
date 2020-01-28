@@ -1,10 +1,9 @@
-﻿using Umbraco.Core.Composing;
+﻿using Application.Core.Configuration;
 using Application.Core.Services;
 using Application.Core.Services.CachedProxies;
-using DangEasy.Caching.MemoryCache;
-using Application.Core.Configuration;
+using Umbraco.Core.Composing;
 
-namespace Application.Web.App_Start
+namespace Application.Web
 {
     public class IoCComposer : IUserComposer
     {
@@ -18,19 +17,17 @@ namespace Application.Web.App_Start
 
         private static void RegisterBuilders(Composition composition)
         {
-
         }
 
         private static void RegisterServices(Composition composition)
         {
-
         }
 
         private static void RegisterCachedServices(Composition composition)
         {
             if (ConfigurationHelper.IsServiceCacheEnabled())
             {
-                composition.Register(typeof(DangEasy.Interfaces.Caching.ICache), typeof(Cache));
+                composition.Register(typeof(ICache), typeof(Cache));
 
                 composition.Register(typeof(CmsService), typeof(CmsService));
                 composition.Register(typeof(ICmsService), typeof(CmsServiceCachedProxy));

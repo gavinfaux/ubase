@@ -1,6 +1,6 @@
 ﻿using Umbraco.Core.Composing;
 
-namespace Application.Web.App_Start
+namespace Application.Web
 {
     public class Mapping : IComposer
     {

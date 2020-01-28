@@ -1,18 +1,16 @@
-﻿using Application.Models.Models.CmsModels;
-using DangEasy.Caching.MemoryCache;
-using DangEasy.Interfaces.Caching;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Application.Models.Models.CmsModels;
 using Umbraco.Web;
 
 namespace Application.Core.Services.CachedProxies
 {
     public class CmsServiceCachedProxy : ICmsService
     {
-        private readonly UmbracoHelper _umbracoHelper;
-        private readonly ICmsService _cmsService;
         private readonly ICache _cache;
+        private readonly ICmsService _cmsService;
+        private readonly UmbracoHelper _umbracoHelper;
 
         public CmsServiceCachedProxy(UmbracoHelper umbracoHelper, CmsService cmsService, ICache cache)
         {
@@ -22,9 +20,8 @@ namespace Application.Core.Services.CachedProxies
         }
 
         /// <summary>
-        /// Uses a Dictionary to store ALL the root nodes in cache.
-        ///
-        /// Uses the IDs in the Path property of the given node to get the Root node from the cached Dictionary.
+        ///     Uses a Dictionary to store ALL the root nodes in cache.
+        ///     Uses the IDs in the Path property of the given node to get the Root node from the cached Dictionary.
         /// </summary>
         /// <param name="nodeId"></param>
         /// <returns></returns>
@@ -40,17 +37,16 @@ namespace Application.Core.Services.CachedProxies
             {
                 // Use the IDs in the Path property to get the Root node from the cached Dictionary.
                 var node = _umbracoHelper.Content(nodeId);
-                var pathIds = node.Path.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x));
+                var pathIds = node.Path.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse);
 
                 foreach (var id in pathIds)
-                {
                     if (sites.ContainsKey(id))
                     {
                         siteNode = sites[id];
 
                         return siteNode;
                     }
-                }
             }
 
             // get here if there were no cached Site nodes, OR the Site node was not found in the dictionary
@@ -58,10 +54,8 @@ namespace Application.Core.Services.CachedProxies
             siteNode = _cmsService.GetSiteNode(nodeId);
 
             if (siteNode != null)
-            {
                 // GetSiteNode might return null
                 sites.Add(siteNode.Id, siteNode);
-            }
 
             _cache.Add(cacheKey, sites);
 
